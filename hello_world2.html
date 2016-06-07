@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Map</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <script src="jquery.js"></script>
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #map {
+    height: 100%;
+  }
+  </style>
+</head>
+<body>
+  <div id="map"></div>
+  <script>
+  var map;
+  var markers = [];
+  var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var labelIndx = 0;
+  function initMap() {
+    var atl = {lat:33.7490, lng: -84.3880};
+    var atv = {lat: 33.773887, lng: -84.402853};
+    var sanFran = {lat: 37.774929, lng: -122.419416};
+    var nyc = {lat:40.712784, lng:-74.005941};
+    var austin = {lat:30.267153, lng:-97.743061};
+    var portland = {lat:45.523062, lng:-122.676482};
+    var london = {lat:51.507351, lng:-0.127758};
+
+    var mapOptions = {
+      center: atl,
+      zoom: 4
+    };
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    //this event listener calls addMarker() when the map
+    //is clicked
+    map.addListener('click', function(event){
+      addMarker(event.latLng);
+    });
+    //adds marker to the center of the map
+    addMarker(atl, "Atlanta");
+
+    addMarker(sanFran, "San Francisco");
+    addMarker(nyc, "New York City");
+    addMarker(austin, "Austin");
+    addMarker(portland, "Portland");
+    //function to add a maker where clicked
+    //add the next available label
+    function addMarker(location, name) {
+      var marker = new google.maps.Marker({
+        position: location,
+        label: labels[labelIndx++ % labels.length],
+        map: map,
+        draggable: true,
+        animation: google.maps.Animation.DROP,
+        name: name
+      });
+      markers.push(marker);
+      //make an info window
+      var infoWindow = new google.maps.InfoWindow({
+        content: "Welcome to " + name + "!"
+      });
+      marker.addListener('click', function() {
+        infoWindow.open(map, marker);
+      });
+      return marker;
+    }
+
+
+
+  }
+
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&callback=initMap"
+    async defer></script>
+</body>
+</html>

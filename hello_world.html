@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Simple Map</title>
+  <meta name="viewport" content="initial-scale=1.0">
+  <meta charset="utf-8">
+  <script src="jquery.js"></script>
+  <style>
+  html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+  }
+  #map {
+    height: 100%;
+  }
+  </style>
+</head>
+<body>
+  <button id="hide">Hide Markers</button>
+  <button id="show">Show Markers</button>
+  <div id="map"></div>
+  <script>
+  var map;
+  var markers = [];
+  var labels = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  var labelIndx = 0;
+  function initMap() {
+    var atl = {lat:33.7490, lng: -84.3880};
+    var mapOptions = {
+      center: atl,
+      zoom: 8
+    };
+    map = new google.maps.Map(document.getElementById('map'), mapOptions);
+
+    //this event listener calls addMarker() when the map
+    //is clicked
+    map.addListener('click', function(event){
+      addMarker(event.latLng);
+    });
+    //adds marker to the center of the map
+    addMarker(atl);
+
+    //function to add a maker where clicked
+    //add the next available label
+    function addMarker(location) {
+      var marker = new google.maps.Marker({
+        position: location,
+        label: labels[labelIndx++ % labels.length],
+        map: map,
+        draggable: true,
+        animation: google.maps.Animation.DROP
+      });
+      markers.push(marker);
+      //marker.addListener('click', toggleBounce);
+      marker.addListener('click', function() {
+        infoWindow.open(map, marker);
+      });
+    }
+    //make an info window
+    var contentString = "<div id='content'>" + "<p>Welcome to Atlanta!" + "</p>" + "</div>";
+    var infoWindow = new google.maps.InfoWindow({
+      content: contentString
+    });
+    //hide and show markers when clicked
+    $("#hide").click(function() {
+      removeMarkers();
+    });
+    $("#show").click(function() {
+      showMarkers();
+    });
+  }
+
+  //to make marker bounce
+  function toggleBounce() {
+    if (marker.getAnimation() !== null) {
+      marker.setAnimation(null);
+    } else {
+      marker.setAnimation(google.maps.Animation.BOUNCE);
+    }
+  }
+
+  //sets the map on all markers in the array
+  function setMapOnAll(map) {
+    for (var i = 0; i < markers.length; i++) {
+      markers[i].setMap(map);
+    }
+  }
+  //removes the markers from the map
+  function removeMarkers() {
+    setMapOnAll(null);
+  }
+  //show markers currently in the array
+  function showMarkers() {
+    setMapOnAll(map);
+  }
+  </script>
+  <script src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&callback=initMap"
+  async defer></script>
+</body>
+</html>

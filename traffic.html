@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <title>Traffic layer</title>
+    <style>
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #map {
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    <script>
+      function initMap() {
+        var atl = {lat:33.7490, lng: -84.3880};
+        var atv = {lat: 33.773887, lng: -84.402853};
+        var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 12,
+          center: atv
+        });
+        addMarker(atv, "Atlanta Tech Village");
+        function addMarker(location, name) {
+          var marker = new google.maps.Marker({
+            position: location,
+            map: map,
+            draggable: true,
+            animation: google.maps.Animation.DROP,
+            name: name
+          });
+          var infoWindow = new google.maps.InfoWindow({
+            content: "Welcome to " + name + "!"
+          });
+          marker.addListener('click', function() {
+            infoWindow.open(map, marker);
+          });
+        }
+        var trafficLayer = new google.maps.TrafficLayer();
+        trafficLayer.setMap(map);
+      }
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=YOURAPIKEY&callback=initMap">
+    </script>
+  </body>
+</html>
